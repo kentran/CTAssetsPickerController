@@ -321,4 +321,17 @@
 extern NSString * const CTAssetsPickerSelectedAssetsChangedNotification;
 
 
+/**
+ *  @name Take Photo
+ */
+
+/**
+ *  Tells the delegate that a new photo was taken and saved as an asset
+ *
+ *  @param picker    The controller object managing the assets picker interface.
+ *  @param asset     The new asset that was created
+ *
+ */
+- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishTakingPhoto:(ALAsset *)asset;
+
 @end

@@ -49,6 +49,7 @@
 		ADF20BD617F2737400E97692 /* CTAssetsPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADF20BD217F2737300E97692 /* CTAssetsPickerController.m */; };
 		ADFDE19C19357D38004752B5 /* ALAsset+accessibilityLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFDE19B19357D38004752B5 /* ALAsset+accessibilityLabel.m */; };
 		ADFDE1A21935857F004752B5 /* NSDateFormatter+timeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = ADFDE1A11935857F004752B5 /* NSDateFormatter+timeIntervalFormatter.m */; };
+		BE1B086A19EFBD39008C7103 /* NSMutableArray+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1B086919EFBD39008C7103 /* NSMutableArray+Utilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +103,8 @@
 		ADFDE19B19357D38004752B5 /* ALAsset+accessibilityLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ALAsset+accessibilityLabel.m"; sourceTree = "<group>"; };
 		ADFDE1A01935857F004752B5 /* NSDateFormatter+timeIntervalFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateFormatter+timeIntervalFormatter.h"; sourceTree = "<group>"; };
 		ADFDE1A11935857F004752B5 /* NSDateFormatter+timeIntervalFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateFormatter+timeIntervalFormatter.m"; sourceTree = "<group>"; };
+		BE1B086819EFBD39008C7103 /* NSMutableArray+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Utilities.h"; sourceTree = "<group>"; };
+		BE1B086919EFBD39008C7103 /* NSMutableArray+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Utilities.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +126,8 @@
 		AD58799A18E5556700B5773D /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				BE1B086819EFBD39008C7103 /* NSMutableArray+Utilities.h */,
+				BE1B086919EFBD39008C7103 /* NSMutableArray+Utilities.m */,
 				AD58799118E553FF00B5773D /* ALAsset+isEqual.h */,
 				AD58799218E553FF00B5773D /* ALAsset+isEqual.m */,
 				ADFDE19A19357D38004752B5 /* ALAsset+accessibilityLabel.h */,
@@ -313,6 +318,7 @@
 				AD58798418E54F0C00B5773D /* CTAssetsGroupViewController.m in Sources */,
 				ADE31D9617EFF08C008958B8 /* main.m in Sources */,
 				AD58799318E553FF00B5773D /* ALAsset+isEqual.m in Sources */,
+				BE1B086A19EFBD39008C7103 /* NSMutableArray+Utilities.m in Sources */,
 				AD58798D18E552D700B5773D /* CTAssetsViewCell.m in Sources */,
 				AD58798718E550B000B5773D /* CTAssetsViewController.m in Sources */,
 				AD58799018E5535400B5773D /* CTAssetsSupplementaryView.m in Sources */,
