@@ -62,6 +62,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 @property BOOL imageCaptured;
 @property (nonatomic, strong) NSLayoutConstraint *tpoBottomLayoutConstraint;
 @property (nonatomic, strong) UIView *takePhotoOverlay;
+@property (nonatomic, strong) UIButton *takePhotoButton;
 
 @end
 
@@ -107,93 +108,14 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     [super viewWillAppear:animated];
     [self setupButtons];
     [self setupToolbar];
-    [self setupAssets];
     [self setupTakePhotoOverlay];
+    [self setupAssets];
 }
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-}
-
-- (void)setupTakePhotoOverlay
-{
-    if (!_takePhotoOverlay) {
-        UIView *overlay = [[UIView alloc] init];
-        overlay.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.75];
-        [self.view addSubview:overlay];
-        
-        overlay.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[overlay]|"
-                                                                         options:0
-                                                                         metrics:nil
-                                                                           views:NSDictionaryOfVariableBindings(overlay)]];
-
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlay
-                                                             attribute:NSLayoutAttributeHeight
-                                                             relatedBy:NSLayoutRelationEqual
-                                                                toItem:nil
-                                                             attribute:NSLayoutAttributeHeight
-                                                            multiplier:1.0
-                                                              constant:60]];
-
-        NSInteger bottomLayoutConst = ([self.navigationController isToolbarHidden]) ? 0 : self.navigationController.toolbar.frame.size.height;
-        self.tpoBottomLayoutConstraint = [NSLayoutConstraint constraintWithItem:self.view
-                                                                      attribute:NSLayoutAttributeBottom
-                                                                      relatedBy:NSLayoutRelationEqual
-                                                                         toItem:overlay
-                                                                      attribute:NSLayoutAttributeBottom
-                                                                     multiplier:1.0
-                                                                       constant:bottomLayoutConst];
-        [self.view addConstraint:self.tpoBottomLayoutConstraint];
-        _takePhotoOverlay = overlay;
-        
-        UIEdgeInsets contentInset = self.collectionView.contentInset;
-        contentInset.bottom = 60;
-        self.collectionView.contentInset = contentInset;
-        
-        UIButton *cameraButton = [[UIButton alloc] init];
-        [cameraButton setImage:[UIImage imageNamed:@"CTAssetsPickerTakePhoto"] forState:UIControlStateNormal];
-
-
-        [overlay addSubview:cameraButton];
-        cameraButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
-                                                           attribute:NSLayoutAttributeHeight
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:nil
-                                                           attribute:NSLayoutAttributeHeight
-                                                           multiplier:1.0
-                                                             constant:50]];
-        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
-                                                            attribute:NSLayoutAttributeWidth
-                                                            relatedBy:NSLayoutRelationEqual
-                                                               toItem:nil
-                                                            attribute:NSLayoutAttributeWidth
-                                                           multiplier:1.0
-                                                             constant:50]];
-        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
-                                                            attribute:NSLayoutAttributeCenterX
-                                                            relatedBy:NSLayoutRelationEqual
-                                                               toItem:overlay
-                                                            attribute:NSLayoutAttributeCenterX
-                                                           multiplier:1.0
-                                                             constant:0]];
-        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
-                                                            attribute:NSLayoutAttributeCenterY
-                                                            relatedBy:NSLayoutRelationEqual
-                                                               toItem:overlay
-                                                            attribute:NSLayoutAttributeCenterY
-                                                           multiplier:1.0
-                                                             constant:0]];
-        
-        cameraButton.layer.cornerRadius = cameraButton.frame.size.height / 2;
-        cameraButton.layer.borderWidth = 2.0f;
-        cameraButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        cameraButton.clipsToBounds = YES;
-        [cameraButton addTarget:self action:@selector(takePhoto) forControlEvents:UIControlEventTouchUpInside];
-    }
+    [self layoutTakePhotoOverlay];
 }
 
 - (void)dealloc
@@ -272,8 +194,6 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     };
     
     [self.assetsGroup enumerateAssetsUsingBlock:resultsBlock];
-    
-    [self.assets reverse];
 }
 
 
@@ -415,7 +335,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     
     if (self.imageCaptured) {
         self.imageCaptured = NO;
-        [self.picker selectAsset:[self.assets firstObject]];
+        [self.picker selectAsset:[self.assets lastObject]];
     }
 }
 
@@ -453,6 +373,95 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 }
 
 #pragma mark - Take Photo
+
+- (void)setupTakePhotoOverlay
+{
+    if (!_takePhotoOverlay) {
+        UIView *overlay = [[UIView alloc] init];
+        overlay.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.75];
+        [self.view addSubview:overlay];
+        
+        overlay.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[overlay]|"
+                                                                          options:0
+                                                                          metrics:nil
+                                                                            views:NSDictionaryOfVariableBindings(overlay)]];
+        
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlay
+                                                              attribute:NSLayoutAttributeHeight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:nil
+                                                              attribute:NSLayoutAttributeHeight
+                                                             multiplier:1.0
+                                                               constant:CTAssetTakePhotoOverlayHeight]];
+        
+        NSInteger bottomLayoutConst = ([self.navigationController isToolbarHidden]) ? 0 : self.navigationController.toolbar.frame.size.height;
+        self.tpoBottomLayoutConstraint = [NSLayoutConstraint constraintWithItem:self.view
+                                                                      attribute:NSLayoutAttributeBottom
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:overlay
+                                                                      attribute:NSLayoutAttributeBottom
+                                                                     multiplier:1.0
+                                                                       constant:bottomLayoutConst];
+        [self.view addConstraint:self.tpoBottomLayoutConstraint];
+        _takePhotoOverlay = overlay;
+        
+        UIEdgeInsets contentInset = self.collectionView.contentInset;
+        contentInset.bottom = CTAssetTakePhotoOverlayHeight;
+        self.collectionView.contentInset = contentInset;
+        
+        UIButton *cameraButton = [[UIButton alloc] init];
+        [cameraButton setImage:[UIImage imageNamed:@"CTAssetsPickerTakePhoto"] forState:UIControlStateNormal];
+        
+        
+        [overlay addSubview:cameraButton];
+        cameraButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
+                                                            attribute:NSLayoutAttributeHeight
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:nil
+                                                            attribute:NSLayoutAttributeHeight
+                                                           multiplier:1.0
+                                                             constant:CTAssetCameraButtonLength]];
+        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
+                                                            attribute:NSLayoutAttributeWidth
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:nil
+                                                            attribute:NSLayoutAttributeWidth
+                                                           multiplier:1.0
+                                                             constant:CTAssetCameraButtonLength]];
+        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
+                                                            attribute:NSLayoutAttributeCenterX
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:overlay
+                                                            attribute:NSLayoutAttributeCenterX
+                                                           multiplier:1.0
+                                                             constant:0]];
+        [overlay addConstraint:[NSLayoutConstraint constraintWithItem:cameraButton
+                                                            attribute:NSLayoutAttributeCenterY
+                                                            relatedBy:NSLayoutRelationEqual
+                                                               toItem:overlay
+                                                            attribute:NSLayoutAttributeCenterY
+                                                           multiplier:1.0
+                                                             constant:0]];
+        
+        [cameraButton addTarget:self action:@selector(takePhoto) forControlEvents:UIControlEventTouchUpInside];
+        self.takePhotoButton = cameraButton;
+    }
+}
+
+
+- (void)layoutTakePhotoOverlay
+{
+    // Handle layout for orientation
+    NSInteger bottomLayoutConst = ([self.navigationController isToolbarHidden]) ? 0 : self.navigationController.toolbar.frame.size.height;
+    [self.tpoBottomLayoutConstraint setConstant:bottomLayoutConst];
+    self.takePhotoButton.layer.cornerRadius = self.takePhotoButton.frame.size.height / 2;
+    self.takePhotoButton.layer.borderWidth = 2.0f;
+    self.takePhotoButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.takePhotoButton.clipsToBounds = YES;
+}
 
 - (void)takePhoto
 {

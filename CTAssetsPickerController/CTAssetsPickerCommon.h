@@ -33,3 +33,6 @@
 #define CTAssetThumbnailLength (CTIPhone6Plus) ? 103.0f : ( (CTIPhone6) ? 93.0f : 78.0f )
 #define CTAssetThumbnailSize CGSizeMake(CTAssetThumbnailLength, CTAssetThumbnailLength)
 #define CTAssetPickerPopoverContentSize CGSizeMake(320, 480)
+
+#define CTAssetCameraButtonLength 50.0f
+#define CTAssetTakePhotoOverlayHeight 60.0f
