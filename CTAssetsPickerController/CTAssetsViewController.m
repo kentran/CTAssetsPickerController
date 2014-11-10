@@ -151,7 +151,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 - (void)setupButtons
 {
     self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil)
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"Done", @"CTAssetsPickerController", nil)
                                      style:UIBarButtonItemStyleDone
                                     target:self.picker
                                     action:@selector(finishPickingAssets:)];
@@ -348,7 +348,9 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     if (self.assets.count > 0)
     {
         [self.collectionView reloadData];
-        [self.collectionView setContentOffset:CGPointMake(0, self.collectionViewLayout.collectionViewContentSize.height)];
+        
+        if (self.collectionView.contentOffset.y <= 0)
+            [self.collectionView setContentOffset:CGPointMake(0, self.collectionViewLayout.collectionViewContentSize.height)];
     }
     else
     {
@@ -466,7 +468,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 - (void)takePhoto
 {
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
+    imagePickerController.modalPresentationStyle = UIModalPresentationFullScreen;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.mediaTypes = @[(NSString *)kUTTypeImage];
     imagePickerController.delegate = self;
@@ -489,9 +491,9 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
          * in case we are trying to dismiss the picker after taking a photo
          */
         if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:didFinishTakingPhoto:)])
-            [self.picker.delegate assetsPickerController:self.picker didFinishTakingPhoto:[self.assets firstObject]];
+            [self.picker.delegate assetsPickerController:self.picker didFinishTakingPhoto:[self.assets lastObject]];
     }];
-//    self.imageCaptured = YES;
+    self.imageCaptured = YES;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

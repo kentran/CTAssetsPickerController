@@ -82,18 +82,11 @@
 
 - (void)clearAssets:(id)sender
 {
-//    if (self.assets)
-//    {
-//        self.assets = nil;
-//        [self.tableView reloadData];
-//    }
-    
-    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-    imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-    imagePickerController.delegate = self;
-    
-    [self presentViewController:imagePickerController animated:YES completion:NULL];
+    if (self.assets)
+    {
+        self.assets = nil;
+        [self.tableView reloadData];
+    }
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
