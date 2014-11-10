@@ -33,7 +33,7 @@
 
 
 @interface CTMasterViewController ()
-<CTAssetsPickerControllerDelegate, UIPopoverControllerDelegate>
+<CTAssetsPickerControllerDelegate, UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @property (nonatomic, copy) NSArray *assets;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
@@ -82,11 +82,23 @@
 
 - (void)clearAssets:(id)sender
 {
-    if (self.assets)
-    {
-        self.assets = nil;
-        [self.tableView reloadData];
-    }
+//    if (self.assets)
+//    {
+//        self.assets = nil;
+//        [self.tableView reloadData];
+//    }
+    
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+    imagePickerController.delegate = self;
+    
+    [self presentViewController:imagePickerController animated:YES completion:NULL];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (void)pickAssets:(id)sender

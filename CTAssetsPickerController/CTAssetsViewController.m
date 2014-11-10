@@ -194,6 +194,11 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     };
     
     [self.assetsGroup enumerateAssetsUsingBlock:resultsBlock];
+    
+    if (self.imageCaptured) {
+        self.imageCaptured = NO;
+        [self.picker selectAsset:[self.assets lastObject]];
+    }
 }
 
 
@@ -332,11 +337,6 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 {
     self.assets = nil;
     [self setupAssets];
-    
-    if (self.imageCaptured) {
-        self.imageCaptured = NO;
-        [self.picker selectAsset:[self.assets lastObject]];
-    }
 }
 
 
@@ -491,7 +491,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
         if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:didFinishTakingPhoto:)])
             [self.picker.delegate assetsPickerController:self.picker didFinishTakingPhoto:[self.assets firstObject]];
     }];
-    self.imageCaptured = YES;
+//    self.imageCaptured = YES;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
