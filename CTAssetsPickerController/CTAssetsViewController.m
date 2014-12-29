@@ -59,7 +59,6 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 @property (nonatomic, weak) CTAssetsPickerController *picker;
 @property (nonatomic, strong) NSMutableArray *assets;
 
-@property BOOL imageCaptured;
 @property (nonatomic, strong) NSLayoutConstraint *tpoBottomLayoutConstraint;
 @property (nonatomic, strong) UIView *takePhotoOverlay;
 @property (nonatomic, strong) UIButton *takePhotoButton;
@@ -194,11 +193,6 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     };
     
     [self.assetsGroup enumerateAssetsUsingBlock:resultsBlock];
-    
-    if (self.imageCaptured) {
-        self.imageCaptured = NO;
-        [self.picker selectAsset:[self.assets lastObject]];
-    }
 }
 
 
@@ -378,6 +372,8 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
 
 - (void)setupTakePhotoOverlay
 {
+    if ([[self.assetsGroup valueForProperty:@"ALAssetsGroupPropertyType"] intValue] != ALAssetsGroupSavedPhotos) return;
+    
     if (!_takePhotoOverlay) {
         UIView *overlay = [[UIView alloc] init];
         overlay.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.75];
@@ -410,7 +406,7 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
         _takePhotoOverlay = overlay;
         
         UIEdgeInsets contentInset = self.collectionView.contentInset;
-        contentInset.bottom = CTAssetTakePhotoOverlayHeight;
+        contentInset.bottom = CTAssetTakePhotoOverlayHeight + self.tpoBottomLayoutConstraint.constant;
         self.collectionView.contentInset = contentInset;
         
         UIButton *cameraButton = [[UIButton alloc] init];
@@ -484,16 +480,26 @@ NSString * const CTAssetsSupplementaryViewIdentifier = @"CTAssetsSupplementaryVi
     UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
+
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
-    [self dismissViewControllerAnimated:YES completion:^{
-        /* Make sure the UIImagePickerController is fully dismissed before calling the delegate
-         * in case we are trying to dismiss the picker after taking a photo
-         */
-        if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:didFinishTakingPhoto:)])
-            [self.picker.delegate assetsPickerController:self.picker didFinishTakingPhoto:[self.assets lastObject]];
-    }];
-    self.imageCaptured = YES;
+    if (!error) {
+        __weak CTAssetsViewController *weakSelf = self;
+        [self dismissViewControllerAnimated:YES completion:^{
+            /* Make sure the UIImagePickerController is fully dismissed before calling the delegate
+             * in case we are trying to dismiss the picker after taking a photo
+             */
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([weakSelf.picker.delegate respondsToSelector:@selector(assetsPickerController:didFinishTakingPhoto:)])
+                    [weakSelf.picker.delegate assetsPickerController:weakSelf.picker didFinishTakingPhoto:[weakSelf.assets lastObject]];
+                [weakSelf reloadAssets];
+                [self.picker selectAsset:[self.assets lastObject]];
+            });
+        }];
+        
+    } else {
+        NSLog(@"Error occured when picking photo: %@", error);
+    }
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
