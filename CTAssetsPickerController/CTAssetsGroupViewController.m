@@ -290,6 +290,7 @@
             
             /* Re-apply the filter if the group changed */
             [group setAssetsFilter:self.picker.assetsFilter];
+            
             [self.groups replaceObjectAtIndex:index withObject:group];
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
@@ -306,7 +307,7 @@
         
         [self.tableView beginUpdates];
         
-        /* Re-apply the filter if the group changed */
+        /* Re-apply the filter to the inserted group */
         [group setAssetsFilter:self.picker.assetsFilter];
         
         [self.groups addObject:group];
