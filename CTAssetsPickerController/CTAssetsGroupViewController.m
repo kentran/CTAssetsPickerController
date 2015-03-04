@@ -133,7 +133,10 @@
                                     target:self.picker
                                     action:@selector(finishPickingAssets:)];
     
-    self.navigationItem.rightBarButtonItem.enabled = (self.picker.selectedAssets.count > 0);
+    if (self.picker.alwaysEnableDoneButton)
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    else
+        self.navigationItem.rightBarButtonItem.enabled = (self.picker.selectedAssets.count > 0);
 }
 
 - (void)setupToolbar
@@ -287,10 +290,10 @@
         if (index != NSNotFound)
         {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            
+
             /* Re-apply the filter if the group changed */
             [group setAssetsFilter:self.picker.assetsFilter];
-            
+
             [self.groups replaceObjectAtIndex:index withObject:group];
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
@@ -307,7 +310,8 @@
         
         [self.tableView beginUpdates];
         
-        /* Re-apply the filter to the inserted group */
+
+        /* Re-apply the filter for inserted group */
         [group setAssetsFilter:self.picker.assetsFilter];
         
         [self.groups addObject:group];
